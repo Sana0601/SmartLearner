@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StudyMaster AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .page {
+            height: 100vh;
+            width: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            transition: 0.5s ease;
+            position: relative;
+        }
+
+        .active {
+            display: flex;
+        }
+
+        button {
+            padding: 15px 30px;
+            margin: 15px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        select, input, textarea {
+            padding: 15px;
+            margin: 10px;
+            border-radius: 25px;
+            width: 280px;
+            max-width: 90%;
+            border: 2px solid #e1e5e9;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* HERO PAGE */
+        #page1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+        }
+
+        #page1 h1 {
+            font-size: 3.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.3); }
+            to { text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 30px rgba(255,255,255,0.5); }
+        }
+
+        /* STANDARD PAGE */
+        #page2 {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+        }
+
+        /* BOOKS PAGE */
+        #page3 {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            color: #2d3436;
+        }
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            width: 280px;
+            margin: 20px;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        /* LOGIN PAGE */
+        #page4 {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #2d3436;
+        }
+
+        .login-box {
+            background: rgba(255,255,255,0.98);
+            padding: 50px;
+            border-radius: 25px;
+            color: #2d3436;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-box input {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            width: calc(100% - 22px);
+        }
+
+        /* DASHBOARD PAGE */
+        #page5 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow-y: auto;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        .dashboard-nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links button {
+            background: none;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #2d3436;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links button.active, .nav-links button:hover {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .tool-section {
+            background: rgba(255,255,255,0.95);
+            margin: 40px 0;
+            padding: 40px;
+            border-radius: 25px;
+            backdrop-filter: blur(20px);
+            color: #2d3436;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .tool-header h2 {
+            font-size: 2.5em;
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+
+        .career-card {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .career-path {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .career-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .career-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .translation-tool {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .translate-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 25px;
+            border: 3px solid #e9ecef;
+            border-radius: 20px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .translate-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+        }
+
+        .translate-controls {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .translate-output {
+            min-height: 150px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            margin-top: 25px;
+            border-left: 6px solid #4ecdc4;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 120px; height: 120px; left: 80%; animation-delay: 2s; }
+        .shape:nth-child(3) { width: 60px; height: 60px; left: 50%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        h1, h2, h3 {
+            margin: 0.5em 0;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        @media (max-width: 768px) {
+            #page1 h1 { font-size: 2.8em; }
+            .translate-controls { flex-direction: column; align-items: stretch; }
+            .nav-links { flex-wrap: wrap; gap: 10px; }
+            .career-list { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Floating Shapes Background -->
+<div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page active" id="page1">
+    <h1>🚀 StudyMaster AI</h1>
+    <p>Your Ultimate Learning Partner for Classes 10, +1 & +2</p>
+    <p style="font-size: 1.1em; margin-top: 10px;">Master Every Subject with Smart Study Tools!</p>
+    <button onclick="nextPage(2)">Start Your Journey</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+    <h2>🎯 Choose Your Level</h2>
+    <select id="standardSelect">
+        <option value="">-- Select Your Class --</option>
+        <option value="10">Class 10</option>
+        <option value="11">+1 (Intermediate 1st Year)</option>
+        <option value="12">+2 (Intermediate 2nd Year)</option>
+    </select>
+
+    <select id="streamSelect" style="display:none;">
+        <option value="">-- Choose Your Stream --</option>
+        <option value="MPC">MPC (Maths, Physics, Chemistry)</option>
+        <option value="BiPC">BiPC (Biology, Physics, Chemistry)</option>
+        <option value="CEC">CEC (Commerce, Economics, Civics)</option>
+        <option value="MEC">MEC (Maths, Economics, Commerce)</option>
+    </select>
+
+    <button onclick="showBooks()">Explore Subjects</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="page3">
+    <h2>📚 Your Study Materials</h2>
+    <div class="cards" id="booksContainer"></div>
+    <button onclick="nextPage(4)">Continue to Dashboard</button>
+</div>
+
+<!-- PAGE 4: LOGIN -->
+<div class="page" id="page4">
+    <div class="login-box">
+        <h2>🔐 Welcome Back!</h2>
+        <p>Access your personalized dashboard</p>
+        <input type="text" id="usernameInput" placeholder="Enter Username (Min 4 chars)"><br>
+        <input type="password" id="passwordInput" placeholder="Enter Password (Min 6 chars)"><br>
+        <button onclick="loginSuccess()">Enter StudyMaster</button>
+        <p style="font-size: 0.9em; margin-top: 20px; color: #636e72;">
+            New? Create account automatically on first login!
+        </p>
+    </div>
+</div>
+
+<!-- PAGE 5: DASHBOARD -->
+<div class="page" id="page5">
+    <!-- Dashboard Navigation -->
+    <div class="dashboard-nav">
+        <div class="nav-content">
+            <div class="logo">🚀 StudyMaster AI <span id="userClassDisplay"></span></div>
+            <div class="nav-links">
+                <button onclick="showDashboardContent('home')" class="active">🏠 Home</button>
+                <button onclick="showDashboardContent('career')">🎯 Career</button>
+                <button onclick="showDashboardContent('translate')">🌐 Translate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- HOME CONTENT -->
+        <div id="home-content" class="page-content active">
+            <div class="tool-section">
+                <div class="tool-header">
+                    <h2>🎉 Welcome to Your Dashboard!</h2>
+                    <p>Complete learning platform with AI-powered tools</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px;">
+                    <div style="background: rgba(255,255,255,0.2); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px);">
+                        <div style="font-size: 3em;">📊</div>
+                        <h3>92% Overall Score</h3>
+                        <p>#12 in your class</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px);">
+                        <div style="font-size: 3em;">📚</div>
+                        <h3>47 Quizzes Done</h3>
+                        <p>Great progress!</p>
+                    </div>
+                </div>
+                <div style="margin-top: 40px;">
+                    <button onclick="showDashboardContent('career')" style="font-size: 1.2em; padding: 20px 40px;">
+                        🎯 Discover Your Career Path
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAREER GUIDANCE CONTENT -->
+        <div id="career-content" class="page-content">
+            <div class="tool-section">
+                <div class="tool-header">
+                    <h2>🎯 Your Perfect Career Path</h2>
+                    <p>Based on your stream selection - Clear roadmap ahead!</p>
+                </div>
+                
+                <div id="careerGuidance" class="career-path">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h3>🔍 Analyzing your stream...</h3>
+                        <button onclick="generateCareerPath()" class="btn" style="background: linear-gradient(135deg, #ff6b6b, #feca57); font-size: 1.1em;">
+                            ✨ Show My Career Path
+                        </button>
+                    </div>
+                    <div id="careerResults" style="display: none;">
+                        <div class="career-card">
+                            <h3>🎓 Top College Entrance Exams</h3>
+                            <p id="entranceExams"></p>
+                        </div>
+                        <div class="career-card">
+                            <h3>💼 Best Career Options</h3>
+                            <div id="careerOptions" class="career-list"></div>
+                        </div>
+                        <div class="career-card">
+                            <h3>📚 Next Steps Action Plan</h3>
+                            <p id="actionPlan"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSLATION TOOL CONTENT -->
+        <div id="translate-content" class="page-content">
+            <div class="tool-section">
+                <div class="tool-header">
+                    <h2>🌐 AI Language Translator & Explainer</h2>
+                    <p>Translate complex concepts into Telugu, Hindi, English with explanations</p>
+                </div>
+                
+                <div class="translation-tool">
+                    <textarea class="translate-input" id="translateInput" 
+                        placeholder="Enter English sentence to translate...&#10;Example: 'Photosynthesis is the process by which plants make food using sunlight.'"></textarea>
+                    
+                    <div class="translate-controls">
+                        <select id="sourceLang">
+                            <option value="en">🇺🇸 English</option>
+                            <option value="te">🇮🇳 Telugu</option>
+                            <option value="hi">🇮🇳 Hindi</option>
+                        </select>
+                        ➜
+                        <select id="targetLang">
+                            <option value="te">🇮🇳 Telugu</option>
+                            <option value="hi">🇮🇳 Hindi</option>
+                            <option value="en">🇺🇸 English</option>
+                            <option value="ta">🇮🇳 Tamil</option>
+                        </select>
+                        <button class="btn" onclick="translateText()" style="background: linear-gradient(45deg, #4ecdc4, #44a08d);">✨ Translate Now</button>
+                    </div>
+                    
+                    <div id="translateOutput" class="translate-output">
+                        Your translation and explanation will appear here...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentStandard = '';
+    let currentStream = '';
+
+    // Page 2: Standard selection
+    document.getElementById("standardSelect").addEventListener("change", function() {
+        let value = this.value;
+        let streamSelect = document.getElementById("streamSelect");
+
+        if(value == "11" || value == "12") {
+            streamSelect.style.display = "block";
+        } else {
+            streamSelect.style.display = "none";
+        }
+    });
+
+    function nextPage(pageNumber) {
+        document.querySelectorAll(".page").forEach(page => {
+            page.style.opacity = "0";
+            page.classList.remove("active");
+        });
+        setTimeout(() => {
+            document.getElementById("page" + pageNumber).classList.add("active");
+            document.getElementById("page" + pageNumber).style.opacity = "1";
+        }, 300);
+    }
+
+    function showBooks() {
+        let standard = document.getElementById("standardSelect").value;
+        let stream = document.getElementById("streamSelect").value;
+        let booksContainer = document.getElementById("booksContainer");
+
+        if (standard === "") {
+            alert("⚠️ Please select your class first!");
+            return;
+        }
+
+        if ((standard == "11" || standard == "12") && stream == "") {
+            alert("⚠️ Please select your stream too!");
+            return;
+        }
+
+        currentStandard = standard;
+        currentStream = stream;
+
+        nextPage(3);
+        booksContainer.innerHTML = '<p style="color: #2d3436; font-size: 1.1em;">Loading your study materials...</p>';
+
+        setTimeout(() => {
+            booksContainer.innerHTML = "";
+            let subjects = [];
+
+            if(standard == "10") {
+                subjects = [
+                    {name: "Mathematics", icon: "🧮"},
+                    {name: "Science", icon: "🔬"},
+                    {name: "English", icon: "📖"},
+                    {name: "Social Studies", icon: "🌍"}
+                ];
+            }
+
+            if(standard == "11" || standard == "12") {
+                if(stream == "MPC") {
+                    subjects = [
+                        {name: "Mathematics", icon: "🧮"},
+                        {name: "Physics", icon: "⚛️"},
+                        {name: "Chemistry", icon: "🧪"}
+                    ];
+                }
+                if(stream == "BiPC") {
+                    subjects = [
+                        {name: "Botany", icon: "🌱"},
+                        {name: "Zoology", icon: "🦠"},
+                        {name: "Physics", icon: "⚛️"},
+                        {name: "Chemistry", icon: "🧪"}
+                    ];
+                }
+                if(stream == "CEC") {
+                    subjects = [
+                        {name: "Civics", icon: "⚖️"},
+                        {name: "Economics", icon: "💰"},
+                        {name: "Commerce", icon: "🏦"}
+                    ];
+                }
+                if(stream == "MEC") {
+                    subjects = [
+                        {name: "Mathematics", icon: "🧮"},
+                        {name: "Economics", icon: "💰"},
+                        {name: "Commerce", icon: "🏦"}
+                    ];
+                }
+            }
+
+            subjects.forEach(subject => {
+                booksContainer.innerHTML += `
+                    <div class="card">
+                        <div style="font-size: 3em; margin-bottom: 15px;">${subject.icon}</div>
+                        <h3>${subject.name}</h3>
+                        <p>${standard == "10" ? "Class 10" : (standard == "11" ? "+1" : "+2")} ${stream ? `- ${stream}` : ""}</p>
+                        <button onclick="nextPage(4)">📚 Continue</button>
+                    </div>
+                `;
+            });
+        }, 800);
+    }
+
+    function loginSuccess() {
+        let username = document.getElementById('usernameInput').value;
+        let password = document.getElementById('passwordInput').value;
+        
+        if(username.length < 4) {
+            alert("⚠️ Username must be at least 4 characters!");
+            return;
+        }
+        if(password.length < 6) {
+            alert("⚠️ Password must be at least 6 characters!");
+            return;
+        }
+        
+        // Set user class info
+        document.getElementById('userClassDisplay').textContent = 
+            `${currentStandard == "10" ? "Class 10" : currentStandard == "11" ? "+1" : "+2"} ${currentStream || ""}`;
+        
+        nextPage(5);
+        alert(`🎉 Welcome to StudyMaster AI, ${username}!\n\nYour personalized dashboard is now active! 🌟`);
+    }
+
+    // DASHBOARD FUNCTIONS
+    function showDashboardContent(contentId) {
+        document.querySelectorAll('.page-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(contentId + '-content').classList.add('active');
+        
+        document.querySelectorAll('.nav-links button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+
+    // CAREER GUIDANCE - STREAM BASED RECOMMENDATIONS
+    function generateCareerPath() {
+        if (!currentStream) {
+            alert("⚠️ Please complete your profile selection first!");
+            return;
+        }
+
+        const careerData = {
+            'MPC': {
+                entranceExams: 'JEE Main/Advanced (IITs), EAMCET, BITSAT, VITEEE',
+                careers: [
+                    {name: 'Software Engineer', icon: '💻', salary: '₹8-25 LPA', colleges: 'IITs, NITs, IIITs'},
+                    {name: 'Data Scientist', icon: '📊', salary: '₹10-30 LPA', colleges: 'IITs, BITS Pilani'},
+                    {name: 'Aerospace Engineer', icon: '🚀', salary: '₹12-28 LPA', colleges: 'IIT Bombay/Madras'},
+                    {name: 'AI/ML Engineer', icon: '🤖', salary: '₹15-40 LPA', colleges: 'IITs, IISc'}
+                ],
+                actionPlan: `1️⃣ Focus 70% Maths + 30% Physics/Chemistry
+2️⃣ Daily 3hr JEE practice (2027 target)
+3️⃣ Learn Python/C++ coding NOW
+4️⃣ Target IIT/NIT Rank < 5000
+5️⃣ Join online test series`
+            },
+            'BiPC': {
+                entranceExams: 'NEET (MBBS), AIIMS, EAMCET (B.Pharmacy), KCET',
+                careers: [
+                    {name: 'Doctor (MBBS)', icon: '🏥', salary: '₹12-50 LPA', colleges: 'AIIMS, JIPMER'},
+                    {name: 'Dentist (BDS)', icon: '🦷', salary: '₹8-20 LPA', colleges: 'Manipal, SRM'},
+                    {name: 'Biotechnologist', icon: '🧬', salary: '₹6-18 LPA', colleges: 'VIT, Amity'},
+                    {name: 'Microbiologist', icon: '🔬', salary: '₹5-15 LPA', colleges: 'JNU, DU'}
+                ],
+                actionPlan: `1️⃣ Focus 50% Biology + 50% Physics/Chemistry
+2️⃣ Daily 200 NEET MCQs practice
+3️⃣ Target NEET Rank < 10,000 (Govt MBBS)
+4️⃣ Join NEET coaching immediately
+5️⃣ Practice Biology diagrams daily`
+            },
+            'CEC': {
+                entranceExams: 'CLAT (Law), CUET (BA Economics), Hotel Management',
+                careers: [
+                    {name: 'Lawyer (LLB)', icon: '⚖️', salary: '₹6-25 LPA', colleges: 'NLSIU, NLU Delhi'},
+                    {name: 'Bank Manager', icon: '🏦', salary: '₹8-20 LPA', colleges: 'SRCC, St Xaviers'},
+                    {name: 'Civil Services (IAS)', icon: '🏛️', salary: '₹15-30 LPA', colleges: 'DU, TISS'},
+                    {name: 'Journalist', icon: '📰', salary: '₹5-18 LPA', colleges: 'Symbiosis, Manipal'}
+                ],
+                actionPlan: `1️⃣ Focus Economics + Current Affairs daily
+2️⃣ Read The Hindu newspaper
+3️⃣ Practice essay writing weekly
+4️⃣ Target CLAT Rank < 2000
+5️⃣ Start UPSC preparation alongside`
+            },
+            'MEC': {
+                entranceExams: 'CUET (B.Com Hons), CA Foundation, Hotel Management',
+                careers: [
+                    {name: 'Chartered Accountant', icon: '📈', salary: '₹10-40 LPA', colleges: 'ICAI'},
+                    {name: 'Investment Banker', icon: '💹', salary: '₹12-50 LPA', colleges: 'Shri Ram College (SRCC)'},
+                    {name: 'Data Analyst', icon: '📊', salary: '₹7-20 LPA', colleges: 'Christ University'},
+                    {name: 'Actuary', icon: '📉', salary: '₹15-35 LPA', colleges: 'ICAI'}
+                ],
+                actionPlan: `1️⃣ Start CA Foundation preparation NOW
+2️⃣ Daily 2hr Maths + 1hr Economics
+3️⃣ Learn Excel + basic accounting
+4️⃣ Target SRCC/LSR for B.Com Hons
+5️⃣ Practice aptitude tests daily`
+            }
+        };
+
+        const data = careerData[currentStream];
+        document.getElementById('entranceExams').textContent = data.entranceExams;
+        document.getElementById('actionPlan').textContent = data.actionPlan;
+
+        // Generate career cards
+        let careerHtml = '';
+        data.careers.forEach(career => {
+            careerHtml += `
+                <div class="career-item">
+                    <div style="font-size: 3em; margin-bottom: 15px;">${career.icon}</div>
+                    <h4>${career.name}</h4>
+                    <p><strong>💰 Salary:</strong> ${career.salary}</p>
+                    <p><strong>🏫 Top Colleges:</strong> ${career.colleges}</p>
+                </div>
+            `;
+        });
+        document.getElementById('careerOptions').innerHTML = careerHtml;
+
+        document.getElementById('careerResults').style.display = 'block';
+        document.getElementById('careerResults').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // LANGUAGE TRANSLATOR (unchanged)
+    function translateText() {
+        const input = document.getElementById('translateInput').value.trim();
+        const sourceLang = document.getElementById('sourceLang').value;
+        const targetLang = document.getElementById('targetLang').value;
+        const output = document.getElementById('translateOutput');
+        
+        if (!input) {
+            output.innerHTML = '<div style="color: #e17055; font-weight: bold;">⚠️ Please enter text to translate!</div>';
+            return;
+        }
+
+        // Translation database
+        const translations = {
+            te: {
+                'photosynthesis': 'ప్రకాశసంశ్లేషణ - మొక్కలు సూర్యరశ్మి ఉపయోగించి ఆహారం తయారు చేసే ప్రక్రియ',
+                'quadratic equation': 'భుక్తి సమీకరణం - ax² + bx + c = 0 రూపంలో ఉంటుంది',
+                'velocity': 'వేగం - దూరం/సమయం (Distance/Time)',
+                'newton first law': 'న్యూటన్ మొదటి నియమం - వస్తువు స్థిరంగా ఉంటుంది లేదా స్థిర వేగంతో కదులుతుంది'
+            },
+            hi: {
+                'photosynthesis': 'प्रकाश संश्लेषण - पौधे सूर्य प्रकाश से भोजन बनाते हैं',
+                'quadratic equation': 'द्विघात समीकरण - ax² + bx + c = 0'
+            },
+            ta: {
+                'photosynthesis': 'ஒளிச்சேர்க்கை - தாவரங்கள் சூரிய ஒளியில் உணவு தயாரிக்கும் செயல்'
+            }
+        };
+
+        let translation = input;
+        let explanation = '';
+
+        // Check for keywords and translate
+        for (let key in translations[targetLang]) {
+            if (input.toLowerCase().includes(key)) {
+                translation = translations[targetLang][key];
+                break;
+            }
+        }
+
+        if (input.toLowerCase().includes('photosynthesis')) {
+            explanation = '🌱 ప్రకాశసంశ్లేషణలో క్లోరోఫిల్ సూర్యరశ్మిని పట్టుకుని ఆహారం తయారు చేస్తుంది.';
+        } else if (input.toLowerCase().includes('quadratic')) {
+            explanation = '📐 భుక్తి సమీకరణాల సూత్రం: x = [-b ± √(b²-4ac)] / 2a.';
+        } else {
+            explanation = '✅ మీ టెక్స్ట్ సరిగ్గా అనువదించబడింది.';
+        }
+
+        output.innerHTML = `
+            <div style="font-weight: bold; font-size: 1.2em; margin-bottom: 20px; color: #2d3436;">
+                ${sourceLang.toUpperCase()} → ${targetLang.toUpperCase()} Translation:
+            </div>
+            <div style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; font-size: 1.2em;">
+                "${translation}"
+            </div>
+            <div style="font-weight: bold; font-size: 1.1em; margin-bottom: 15px; color: #2d3436;">
+                💡 Smart Explanation:
+            </div>
+            <div style="background: rgba(78,205,196,0.2); padding: 20px; border-radius: 15px; line-height: 1.6;">
+                ${explanation}
+            </div>
+        `;
+    }
+
+    // Add fade-in animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Keyboard shortcut for translation
+    document.addEventListener('DOMContentLoaded', function() {
+        const translateInput = document.getElementById('translateInput');
+        if (translateInput) {
+            translateInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    translateText();
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
